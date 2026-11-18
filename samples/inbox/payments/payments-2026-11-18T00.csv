@@ -1,0 +1,3 @@
+key,event_ts,op,status,amount
+PAY-77,2026-11-18T00:15:00,upsert,captured,42.50
+PAY-78,2026-11-18T00:25:00,upsert,authorized,18.00

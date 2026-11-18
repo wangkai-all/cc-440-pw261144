@@ -1,0 +1,3 @@
+key,event_ts,op,status,amount,region
+ORD-1004,2026-11-18T02:12:30,upsert,paid,7.25,eu
+ORD-1001,2026-11-18T02:48:55,upsert,packed,42.50,eu

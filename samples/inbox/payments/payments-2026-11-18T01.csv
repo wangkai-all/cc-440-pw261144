@@ -1,0 +1,6 @@
+key,event_ts,op,status,amount
+PAY-78,2026-11-18T01:02:00,upsert,captured,18.00
+PAY-79,2026-11-18T01:35:00,upsert,authorized,7.25
+PAY-79,2026-11-18T01:36:00,upsert,captured,7.25
+PAY-79,2026-11-18T01:37:00,delete,,
+PAY-80,2026-11-18T01:50:00,upsert,refunded,99.99

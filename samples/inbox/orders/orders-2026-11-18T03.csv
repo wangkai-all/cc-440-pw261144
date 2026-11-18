@@ -1,0 +1,4 @@
+key,event_ts,op,status,amount,region
+ORD-1001,2026-11-18T03:07:19,upsert,shipped,42.50,eu
+ORD-1005,2026-11-18T03:33:58,upsert,new,250.00,us
+ORD-1002,2026-11-18T03:51:10,delete,,,

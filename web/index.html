@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>incmerge · incremental batch console</title>
+<link rel="stylesheet" href="/static/app.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-name">incmerge</span>
+    <span class="brand-sub">hourly CSV → incremental table</span>
+  </div>
+  <div class="topbar-right">
+    <label class="field">
+      <span>Dataset</span>
+      <select id="dataset-select" aria-label="Dataset"></select>
+    </label>
+    <label class="field">
+      <span>Actor</span>
+      <input id="actor" value="dashboard" size="12" aria-label="Audit actor" />
+    </label>
+    <button id="refresh" class="btn btn-ghost" type="button">Refresh</button>
+    <span id="chain-badge" class="badge badge-good" role="status">
+      <span class="dot" aria-hidden="true"></span><span id="chain-text">audit chain</span>
+    </span>
+  </div>
+</header>
+
+<main id="app" aria-live="polite">
+  <section class="hero" aria-labelledby="wm-heading">
+    <div class="hero-figure">
+      <p class="eyebrow" id="wm-heading">Published watermark</p>
+      <p class="hero-value" id="wm-value">—</p>
+      <p class="hero-note" id="wm-note"></p>
+    </div>
+    <dl class="kpis" id="kpis"></dl>
+  </section>
+
+  <section class="panel" aria-labelledby="chain-heading">
+    <div class="panel-head">
+      <div>
+        <h2 id="chain-heading">Batch dependency chain</h2>
+        <p class="panel-sub">Each hour is a batch; publication is the contiguous run from the dataset start.</p>
+      </div>
+      <ul class="legend" aria-label="Hour states">
+        <li><span class="swatch" style="--c: var(--state-published)"></span>Published</li>
+        <li><span class="swatch" style="--c: var(--state-blocked)"></span>Applied · withheld</li>
+        <li><span class="swatch" style="--c: var(--state-missing)"></span>Missing</li>
+        <li><span class="swatch" style="--c: var(--state-conflict)"></span>Conflict</li>
+        <li><span class="swatch" style="--c: var(--state-pending)"></span>Pending merge</li>
+      </ul>
+    </div>
+    <div class="chain-wrap">
+      <div class="chain-tip-layer" id="chain-tip" role="tooltip" hidden></div>
+      <div class="chain-scroll">
+        <div class="chain" id="chain" role="list"></div>
+      </div>
+      <div class="chain-scale" id="chain-scale"></div>
+    </div>
+    <p class="hint" id="chain-hint">Select an hour to inspect its batch, snapshot and recovery actions.</p>
+  </section>
+
+  <div class="split">
+    <section class="panel" aria-labelledby="watch-heading">
+      <div class="panel-head">
+        <div>
+          <h2 id="watch-heading">Watchlist</h2>
+          <p class="panel-sub">Blocking mismatches first, then observations resolved by the merge rules.</p>
+        </div>
+        <span class="count" id="conflict-count"></span>
+      </div>
+      <ul class="issues" id="issues"></ul>
+    </section>
+
+    <section class="panel" aria-labelledby="detail-heading">
+      <div class="panel-head">
+        <div>
+          <h2 id="detail-heading">Hour detail</h2>
+          <p class="panel-sub" id="detail-sub">No hour selected.</p>
+        </div>
+      </div>
+      <div id="detail" class="detail"></div>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="audit-heading">
+    <div class="panel-head">
+      <div>
+        <h2 id="audit-heading">Audit chain</h2>
+        <p class="panel-sub">Hash-linked append-only log. Every delivery, merge, conflict and publish is recorded.</p>
+      </div>
+      <div class="row">
+        <input id="audit-filter" class="input" placeholder="Filter events" aria-label="Filter audit events" />
+        <span class="count" id="audit-count"></span>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table" id="audit-table">
+        <thead>
+          <tr><th>#</th><th>Time</th><th>Event</th><th>Dataset</th><th>Hour</th><th>Detail</th><th>Hash</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="records-heading">
+    <div class="panel-head">
+      <div>
+        <h2 id="records-heading">Materialised records</h2>
+        <p class="panel-sub">Current table after folding every applied batch in event-time order.</p>
+      </div>
+      <span class="count" id="records-count"></span>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table" id="records-table">
+        <thead>
+          <tr><th>Key</th><th>State</th><th>Event time</th><th>Source hour</th><th>Payload</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<dialog id="action-dialog" class="dialog">
+  <form method="dialog" class="dialog-inner">
+    <h2 id="dialog-title">Recover hour</h2>
+    <p class="panel-sub" id="dialog-sub"></p>
+    <div id="dialog-body"></div>
+    <div class="dialog-actions">
+      <button class="btn btn-ghost" value="cancel" type="submit">Cancel</button>
+      <button class="btn btn-primary" id="dialog-run" value="run" type="button">Run</button>
+    </div>
+    <pre id="dialog-result" class="result" hidden></pre>
+  </form>
+</dialog>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+key,event_ts,op,status,amount,region
+ORD-1001,2026-11-18T00:03:12,upsert,new,42.50,eu
+ORD-1002,2026-11-18T00:11:47,upsert,new,18.00,us
+ORD-1003,2026-11-18T00:19:05,upsert,new,99.99,apac
+ORD-1001,2026-11-18T00:41:33,upsert,paid,42.50,eu
